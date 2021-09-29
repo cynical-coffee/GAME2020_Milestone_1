@@ -18,7 +18,7 @@ APlayerCharacterCPP::APlayerCharacterCPP()
 	ThirdPersonSpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("ThirdPersonSpringArm"));
 	ThirdPersonSpringArm->SetupAttachment(RootComponent);
 	ThirdPersonSpringArm->bUsePawnControlRotation = true;
-	const FVector ThirdPersonSpringLocation(0.0, 0.0, 70.0);
+	const FVector ThirdPersonSpringLocation(0.0, 0.0, 50.0);
 	ThirdPersonSpringArm->SetRelativeLocation(ThirdPersonSpringLocation);
 	const FVector ThirdPersonSpringOffset(0.0, 0.0, 100.0);
 	ThirdPersonSpringArm->SocketOffset = ThirdPersonSpringOffset;
