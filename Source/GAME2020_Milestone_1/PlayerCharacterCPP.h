@@ -11,6 +11,11 @@ class GAME2020_MILESTONE_1_API APlayerCharacterCPP : public ACharacter
 {
 	GENERATED_BODY()
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "True"))
+		class USpringArmComponent* ThirdPersonSpringArm;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "True"))
+		class UCameraComponent* ThirdPersonCamera;
+
 public:
 	// Sets default values for this character's properties
 	APlayerCharacterCPP();
@@ -18,6 +23,8 @@ public:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+	void MoveForward(float value);
+	void MoveRight(float value);
 
 public:	
 	// Called every frame

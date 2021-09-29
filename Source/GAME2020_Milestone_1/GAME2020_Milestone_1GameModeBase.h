@@ -13,5 +13,7 @@ UCLASS()
 class GAME2020_MILESTONE_1_API AGAME2020_Milestone_1GameModeBase : public AGameModeBase
 {
 	GENERATED_BODY()
-	
+
+public:
+	AGAME2020_Milestone_1GameModeBase();
 };
