@@ -29,6 +29,7 @@ protected:
 	void MoveForward(float value);
 	void MoveRight(float value);
 	void LaunchJump();
+	void DoubleJump();
 	void ForwardTrace();
 	void HeightTrace();
 

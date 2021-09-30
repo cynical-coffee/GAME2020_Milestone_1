@@ -2,9 +2,13 @@
 
 
 #include "PlayerCharacterCPP.h"
+
+#include <string>
+
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "DrawDebugHelpers.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 // Sets default values
 APlayerCharacterCPP::APlayerCharacterCPP()
@@ -21,7 +25,8 @@ APlayerCharacterCPP::APlayerCharacterCPP()
 	ThirdPersonSpringArm->bUsePawnControlRotation = true;
 	const FVector ThirdPersonSpringLocation(0.0, 0.0, 50.0);
 	ThirdPersonSpringArm->SetRelativeLocation(ThirdPersonSpringLocation);
-	const FVector ThirdPersonSpringOffset(0.0, 0.0, 100.0);
+	const FVector ThirdPersonSpringOffset(0.0, 0.0, 300.0);
+	ThirdPersonSpringArm->TargetArmLength = 600.f;
 	ThirdPersonSpringArm->SocketOffset = ThirdPersonSpringOffset;
 	ThirdPersonSpringArm->bEnableCameraRotationLag = true;
 
@@ -31,34 +36,70 @@ APlayerCharacterCPP::APlayerCharacterCPP()
 	ThirdPersonCamera->bUsePawnControlRotation = false;
 	const FRotator CameraRotation(-30.0, 0.0, 0.0);
 	ThirdPersonCamera->SetRelativeRotation(CameraRotation);
+
+	// Player movement values
+	GetCharacterMovement()->GravityScale = 3.0f;
+	GetCharacterMovement()->JumpZVelocity = 1400.0f;
 }
 
 // Called when the game starts or when spawned
 void APlayerCharacterCPP::BeginPlay()
 {
 	Super::BeginPlay();
-	
 }
 
 void APlayerCharacterCPP::MoveForward(float value)
 {
-	FVector forward = GetActorForwardVector();
-	AddMovementInput(forward, value);
+	/*FVector forward = GetActorForwardVector();
+	AddMovementInput(forward, value);*/
+
+	if ((Controller != nullptr) && (value != 0.0f))
+	{
+		const FRotator rRotation = Controller->GetControlRotation();
+		const FRotator rYawRotation(0.0, rRotation.Yaw, 0);
+
+		const FVector vDirection = FRotationMatrix(rYawRotation).GetUnitAxis(EAxis::X);
+		AddMovementInput(vDirection, value);
+	}
 }
 
 void APlayerCharacterCPP::MoveRight(float value)
 {
-	FVector right = GetActorRightVector();
-	AddMovementInput(right, value);
+	/*FVector right = GetActorRightVector();
+	AddMovementInput(right, value);*/
+
+	if ((Controller != nullptr) && (value != 0.0f))
+	{
+		const FRotator rRotation = Controller->GetControlRotation();
+		const FRotator rYawRotation(0.0, rRotation.Yaw, 0);
+
+		const FVector vDirection = FRotationMatrix(rYawRotation).GetUnitAxis(EAxis::Y);
+		AddMovementInput(vDirection, value);
+	}
 }
 
 void APlayerCharacterCPP::LaunchJump()
 {
+	JumpMaxCount = 2;
 	const float vel = GetVelocity().Z;
-	const FVector launchVel(0.0, 0.0, -400.0);
+	const FVector launchVel(0.0, 0.0, -800.0);
 	if (vel >= 0.0f)
 	{
 		LaunchCharacter(launchVel, false, false);
+	}
+}
+
+void APlayerCharacterCPP::DoubleJump()
+{
+	JumpMaxCount = 2;
+	const FVector launchVel(0.0, 0.0, -800.0);
+	if (GetCharacterMovement()->IsFalling())
+	{
+		if (JumpCurrentCount <= JumpMaxCount)
+		{
+			LaunchCharacter(launchVel, false, false);
+		}
+		
 	}
 }
 
@@ -68,7 +109,7 @@ void APlayerCharacterCPP::ForwardTrace()
 	FVector start = GetActorLocation();
 	FVector end = (GetActorForwardVector() * 150.0f) + GetActorLocation();
 	FCollisionQueryParams collisionQuery;
-	DrawDebugLine(GetWorld(), start, end, FColor::Red, false, 1, 0, 1);
+	//DrawDebugLine(GetWorld(), start, end, FColor::Red, false, 1, 0, 1);
 	if (GetWorld()->LineTraceSingleByChannel(outHit, start, end, ECC_Visibility, collisionQuery))
 	{
 		if (outHit.bBlockingHit)
@@ -90,7 +131,7 @@ void APlayerCharacterCPP::HeightTrace()
 	FVector start = GetActorLocation() + FVector(0, 0, 500.0f);
 	FVector end = (GetActorForwardVector() * 75.0f) + start - FVector(0, 0, 500.0f);
 	FCollisionQueryParams collisionQuery;
-	DrawDebugLine(GetWorld(), start, end, FColor::Red, false, 1, 0, 1);
+	//DrawDebugLine(GetWorld(), start, end, FColor::Red, false, 1, 0, 1);
 	if (GetWorld()->LineTraceSingleByChannel(outHit, start, end, ECC_Visibility, collisionQuery))
 	{
 		if (outHit.bBlockingHit)
@@ -121,6 +162,6 @@ void APlayerCharacterCPP::SetupPlayerInputComponent(UInputComponent* PlayerInput
 	PlayerInputComponent->BindAxis("Turn", this, &APlayerCharacterCPP::AddControllerYawInput);
 	PlayerInputComponent->BindAxis("LookUp", this, &APlayerCharacterCPP::AddControllerPitchInput);
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &APlayerCharacterCPP::Jump);
-	PlayerInputComponent->BindAction("Jump", IE_Released, this, &APlayerCharacterCPP::LaunchJump);
+	PlayerInputComponent->BindAction("Jump", IE_Released, this, &APlayerCharacterCPP::DoubleJump);
 }
 
