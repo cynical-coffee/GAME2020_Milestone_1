@@ -16,6 +16,9 @@ class GAME2020_MILESTONE_1_API APlayerCharacterCPP : public ACharacter
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "True"))
 		class UCameraComponent* ThirdPersonCamera;
 
+	FVector outHitNormal;
+	FVector wallLocation;
+
 public:
 	// Sets default values for this character's properties
 	APlayerCharacterCPP();
@@ -25,6 +28,9 @@ protected:
 	virtual void BeginPlay() override;
 	void MoveForward(float value);
 	void MoveRight(float value);
+	void LaunchJump();
+	void ForwardTrace();
+	void HeightTrace();
 
 public:	
 	// Called every frame
