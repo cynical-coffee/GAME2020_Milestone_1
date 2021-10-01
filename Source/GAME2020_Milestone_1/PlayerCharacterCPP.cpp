@@ -50,32 +50,32 @@ void APlayerCharacterCPP::BeginPlay()
 
 void APlayerCharacterCPP::MoveForward(float value)
 {
-	/*FVector forward = GetActorForwardVector();
-	AddMovementInput(forward, value);*/
+	FVector forward = GetActorForwardVector();
+	AddMovementInput(forward, value);
 
-	if ((Controller != nullptr) && (value != 0.0f))
+	/*if ((Controller != nullptr) && (value != 0.0f))
 	{
 		const FRotator rRotation = Controller->GetControlRotation();
 		const FRotator rYawRotation(0.0, rRotation.Yaw, 0);
 
 		const FVector vDirection = FRotationMatrix(rYawRotation).GetUnitAxis(EAxis::X);
 		AddMovementInput(vDirection, value);
-	}
+	}*/
 }
 
 void APlayerCharacterCPP::MoveRight(float value)
 {
-	/*FVector right = GetActorRightVector();
-	AddMovementInput(right, value);*/
+	FVector right = GetActorRightVector();
+	AddMovementInput(right, value);
 
-	if ((Controller != nullptr) && (value != 0.0f))
+	/*if ((Controller != nullptr) && (value != 0.0f))
 	{
 		const FRotator rRotation = Controller->GetControlRotation();
 		const FRotator rYawRotation(0.0, rRotation.Yaw, 0);
 
 		const FVector vDirection = FRotationMatrix(rYawRotation).GetUnitAxis(EAxis::Y);
 		AddMovementInput(vDirection, value);
-	}
+	}*/
 }
 
 void APlayerCharacterCPP::LaunchJump()
@@ -120,7 +120,6 @@ void APlayerCharacterCPP::ForwardTrace()
 			}
 		}
 	}
-
 	outHitNormal = outHit.Normal;
 	wallLocation = outHit.Location;
 }

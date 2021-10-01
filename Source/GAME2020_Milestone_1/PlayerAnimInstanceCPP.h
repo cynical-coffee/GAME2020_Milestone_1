@@ -32,6 +32,8 @@ public:
 	float fMovementSpeed;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Movement);
 	float fDirection;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Movement);
+	bool bIsAccelerating;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Movement)
-		bool bIsInAir;
+	bool bIsInAir;
 };
