@@ -15,9 +15,10 @@ APlayerCharacterCPP::APlayerCharacterCPP()
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+
 	bUseControllerRotationPitch = false;
 	bUseControllerRotationRoll = false;
-	bUseControllerRotationYaw = true;
+	bUseControllerRotationYaw = false;
 
 	// Spring Arm
 	ThirdPersonSpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("ThirdPersonSpringArm"));
@@ -28,7 +29,7 @@ APlayerCharacterCPP::APlayerCharacterCPP()
 	const FVector ThirdPersonSpringOffset(0.0, 0.0, 300.0);
 	ThirdPersonSpringArm->TargetArmLength = 600.f;
 	ThirdPersonSpringArm->SocketOffset = ThirdPersonSpringOffset;
-	ThirdPersonSpringArm->bEnableCameraRotationLag = true;
+	//ThirdPersonSpringArm->bEnableCameraRotationLag = true;
 
 	// Third-Person Camera
 	ThirdPersonCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("ThirdPersonCamera"));
@@ -40,6 +41,9 @@ APlayerCharacterCPP::APlayerCharacterCPP()
 	// Player movement values
 	GetCharacterMovement()->GravityScale = 3.0f;
 	GetCharacterMovement()->JumpZVelocity = 1400.0f;
+	GetCharacterMovement()->bOrientRotationToMovement = true;
+	GetCharacterMovement()->RotationRate = FRotator(0.0f, 540.0f, 0.0f);
+	GetCharacterMovement()->AirControl = 0.2f;
 }
 
 // Called when the game starts or when spawned
@@ -50,32 +54,32 @@ void APlayerCharacterCPP::BeginPlay()
 
 void APlayerCharacterCPP::MoveForward(float value)
 {
-	FVector forward = GetActorForwardVector();
-	AddMovementInput(forward, value);
+	/*FVector forward = GetActorForwardVector();
+	AddMovementInput(forward, value);*/
 
-	/*if ((Controller != nullptr) && (value != 0.0f))
+	if ((Controller != nullptr) && (value != 0.0f))
 	{
 		const FRotator rRotation = Controller->GetControlRotation();
 		const FRotator rYawRotation(0.0, rRotation.Yaw, 0);
 
 		const FVector vDirection = FRotationMatrix(rYawRotation).GetUnitAxis(EAxis::X);
 		AddMovementInput(vDirection, value);
-	}*/
+	}
 }
 
 void APlayerCharacterCPP::MoveRight(float value)
 {
-	FVector right = GetActorRightVector();
-	AddMovementInput(right, value);
+	/*FVector right = GetActorRightVector();
+	AddMovementInput(right, value);*/
 
-	/*if ((Controller != nullptr) && (value != 0.0f))
+	if ((Controller != nullptr) && (value != 0.0f))
 	{
 		const FRotator rRotation = Controller->GetControlRotation();
 		const FRotator rYawRotation(0.0, rRotation.Yaw, 0);
 
 		const FVector vDirection = FRotationMatrix(rYawRotation).GetUnitAxis(EAxis::Y);
 		AddMovementInput(vDirection, value);
-	}*/
+	}
 }
 
 void APlayerCharacterCPP::LaunchJump()
@@ -95,12 +99,17 @@ void APlayerCharacterCPP::DoubleJump()
 	const FVector launchVel(0.0, 0.0, -800.0);
 	if (GetCharacterMovement()->IsFalling())
 	{
-		if (JumpCurrentCount <= JumpMaxCount)
+		if (GetJumpCount() <= GetMaxJumpCount())
 		{
 			LaunchCharacter(launchVel, false, false);
 		}
 		
 	}
+}
+
+void APlayerCharacterCPP::Attack()
+{
+	//PlayAnimMontage()
 }
 
 void APlayerCharacterCPP::ForwardTrace()
@@ -114,10 +123,10 @@ void APlayerCharacterCPP::ForwardTrace()
 	{
 		if (outHit.bBlockingHit)
 		{
-			if (GEngine)
+			/*if (GEngine)
 			{
 				GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Red, FString::Printf(TEXT("You are hitting: %s"), *outHit.GetActor()->GetName()));
-			}
+			}*/
 		}
 	}
 	outHitNormal = outHit.Normal;
@@ -135,13 +144,24 @@ void APlayerCharacterCPP::HeightTrace()
 	{
 		if (outHit.bBlockingHit)
 		{
-			if (GEngine)
+			/*if (GEngine)
 			{
 				GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Blue, FString::Printf(TEXT("You are hitting: %s"), *outHit.GetActor()->GetName()));
-			}
+			}*/
 		}
 	}
 
+}
+
+int APlayerCharacterCPP::GetMaxJumpCount()
+{
+	JumpMaxCount = 2;
+	return JumpMaxCount;
+}
+
+int APlayerCharacterCPP::GetJumpCount()
+{
+	return JumpCurrentCount;
 }
 
 // Called every frame
@@ -158,8 +178,12 @@ void APlayerCharacterCPP::SetupPlayerInputComponent(UInputComponent* PlayerInput
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 	PlayerInputComponent->BindAxis("MoveForward", this, &APlayerCharacterCPP::MoveForward);
 	PlayerInputComponent->BindAxis("MoveRight", this, &APlayerCharacterCPP::MoveRight);
+
+
 	PlayerInputComponent->BindAxis("Turn", this, &APlayerCharacterCPP::AddControllerYawInput);
 	PlayerInputComponent->BindAxis("LookUp", this, &APlayerCharacterCPP::AddControllerPitchInput);
+
+
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &APlayerCharacterCPP::Jump);
 	PlayerInputComponent->BindAction("Jump", IE_Released, this, &APlayerCharacterCPP::DoubleJump);
 }

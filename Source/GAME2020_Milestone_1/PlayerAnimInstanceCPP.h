@@ -22,9 +22,9 @@ class GAME2020_MILESTONE_1_API UPlayerAnimInstanceCPP : public UAnimInstance
 public:
 
 	// Character Properties
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Movement)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Animation)
 		class APawn* OwningPawn;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Movement)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Animation)
 		class APlayerCharacterCPP* PlayerCharacter;
 
 	// Movement Variables
@@ -36,4 +36,8 @@ public:
 	bool bIsAccelerating;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Movement)
 	bool bIsInAir;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Movement)
+	int iMaxJumpCount;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Movement)
+	int iJumpCount;
 };

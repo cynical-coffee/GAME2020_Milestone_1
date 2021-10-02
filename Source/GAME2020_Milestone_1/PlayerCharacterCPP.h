@@ -30,6 +30,7 @@ protected:
 	void MoveRight(float value);
 	void LaunchJump();
 	void DoubleJump();
+	void Attack();
 	void ForwardTrace();
 	void HeightTrace();
 
@@ -39,5 +40,8 @@ public:
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+	int GetMaxJumpCount();
+	int GetJumpCount();
 
 };

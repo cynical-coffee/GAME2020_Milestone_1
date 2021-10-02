@@ -34,6 +34,8 @@ void UPlayerAnimInstanceCPP::UpdateAnimationProperties(float deltaTime)
 		fMovementSpeed = vLateralSpeed.Size();
 		fDirection = CalculateDirection(vSpeed, OwningPawn->GetControlRotation());
 		bIsInAir = OwningPawn->GetMovementComponent()->IsFalling();
+		iMaxJumpCount = Cast<APlayerCharacterCPP>(OwningPawn)->GetMaxJumpCount();
+		iJumpCount = Cast<APlayerCharacterCPP>(OwningPawn)->GetJumpCount();
 
 		if (PlayerCharacter == nullptr)
 		{
